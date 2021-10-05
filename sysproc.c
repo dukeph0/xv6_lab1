@@ -90,6 +90,8 @@ sys_uptime(void)
   return xticks;
 }
 
-int sys_mycallD(void){
+int
+sys_mycall(void)
+{
   return mycall();
 }
