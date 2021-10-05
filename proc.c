@@ -532,3 +532,7 @@ procdump(void)
     cprintf("\n");
   }
 }
+
+int mycall(void){
+  return 9;
+}
