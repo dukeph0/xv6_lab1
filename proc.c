@@ -534,5 +534,6 @@ procdump(void)
 }
 
 int mycall(void){
+
   return 9;
 }
