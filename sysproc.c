@@ -16,7 +16,9 @@ sys_fork(void)
 int
 sys_exit(void)
 {
-  exit();
+  int exit_status;
+  argint(0, &exit_status); //argint() must be invoked to pass in an integer.
+  exit(exit_status);
   return 0;  // not reached
 }
 
