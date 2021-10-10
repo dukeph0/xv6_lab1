@@ -25,7 +25,10 @@ sys_exit(void)
 int
 sys_wait(void)
 {
-  return wait();
+  //TODO: Fix this function if anything needs to be added
+  int *wait_status;
+  wait_status = 0; // line added to test out exit status values
+  return wait(wait_status);
 }
 
 int
