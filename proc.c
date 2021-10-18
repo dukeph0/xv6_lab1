@@ -261,7 +261,7 @@ exit(int status)
     }
   }
 
-  curproc->exit_status = status;
+  curproc->status = status;
 
   // Jump into the scheduler, never to return.
   curproc->state = ZOMBIE;
@@ -289,6 +289,7 @@ wait(int *status)
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
+        if(status) {*status = p->status;}
         pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;

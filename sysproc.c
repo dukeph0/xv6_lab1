@@ -27,7 +27,7 @@ sys_wait(void)
 {
   //TODO: Fix this function if anything needs to be added
   int *wait_status;
-  wait_status = 0; // line added to test out exit status values
+  argptr(0, (char**)&wait_status, sizeof(int*));
   return wait(wait_status);
 }
 
