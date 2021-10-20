@@ -5,6 +5,7 @@ struct rtcdate;
 int fork(void);
 int exit(int) __attribute__((noreturn)); //Changes were made here
 int wait(int *); //changes were made
+int waitpid(int, int*, int); //waitpid here
 int pipe(int*);
 int write(int, const void*, int);
 int read(int, void*, int);
