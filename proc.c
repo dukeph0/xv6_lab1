@@ -320,7 +320,7 @@ waitpid(int pid, int *status, int options)
 {
     //still need to analyze and locate where to assign status****
   struct proc *p;
-  int havekids, pid2;
+  int havekids;
   struct proc *curproc = myproc();
   
   acquire(&ptable.lock);
@@ -328,13 +328,13 @@ waitpid(int pid, int *status, int options)
     // Scan through table looking for exited children.
     havekids = 0;
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
-      if(p->parent != curproc)
+      if(p->pid != pid)
         continue;
       havekids = 1;
       if(p->state == ZOMBIE){
         // Found one.
         if(status) {*status = p->status;}
-        pid2 = p->pid;
+        pid = p->pid;
         kfree(p->kstack);
         p->kstack = 0;
         freevm(p->pgdir);
@@ -343,9 +343,16 @@ waitpid(int pid, int *status, int options)
         p->name[0] = 0;
         p->killed = 0;
         p->state = UNUSED;
-        if(status) {*status = p->status;}
+        //if(status) {*status = p->status;}
         release(&ptable.lock);
-        return pid2;
+        return pid;
+      }
+      //if WNOHANG option is passed in by user
+      //if process is still running, we return 0
+      else if(options == 1) 
+      {
+        release(&ptable.lock);
+        return 0;
       }
     }
 
