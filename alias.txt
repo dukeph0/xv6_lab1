@@ -1,0 +1,4 @@
+//everything was kept the same as original doc
+exit=exit
+wait=wait
+waitpid=waitpid
