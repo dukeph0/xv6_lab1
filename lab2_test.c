@@ -37,7 +37,7 @@ int main(int argc, char *argv[])
 			for(k=0;k<1000;k++) {
 				asm("nop"); }}
 		printf(1, "\n child# %d with priority %d has finished! \n",getpid(),30-10*i);		
-		exit();
+		exit(0);
         }
         else {
 			printf(2," \n Error \n");
@@ -52,5 +52,5 @@ int main(int argc, char *argv[])
 		}
                      printf(1,"\n if processes with highest priority finished first then its correct \n");
 }
-	exit();		
+	exit(0);		
 	return 0;}
