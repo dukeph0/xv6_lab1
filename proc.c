@@ -88,7 +88,8 @@ allocproc(void)
 found:
   p->state = EMBRYO;
   p->pid = nextpid++;
-
+  //add default priority assignment
+  p->priority = 10;
   release(&ptable.lock);
 
   // Allocate kernel stack.
@@ -379,6 +380,7 @@ void
 scheduler(void)
 {
   struct proc *p;
+  struct proc *p1;
   struct cpu *c = mycpu();
   c->proc = 0;
   
@@ -386,15 +388,33 @@ scheduler(void)
     // Enable interrupts on this processor.
     sti();
 
+    //created pointer pointing to the higher priority process
+    struct proc *high_priority;
     // Loop over process table looking for process to run.
     acquire(&ptable.lock);
     for(p = ptable.proc; p < &ptable.proc[NPROC]; p++){
       if(p->state != RUNNABLE)
+        //if process state not runnable continue until
+        //we find one that is 
         continue;
-
+      //we found a runnable process
+      //set the highprioriy to p (sort of like finding a max)
+      high_priority = p;
+      //make a temp p to run through the table again to make 
+      //sure the processes we are comparing are runnable
+      for(p1 = ptable.proc; p1 < &ptable.proc[NPROC]; p1++){
+        if(p1->state != RUNNABLE)
+          continue;
+        //if they are runnable, we compare which priority is higher
+        //lower the value, higher the priority & vice versa
+        if(high_priority->priority > p1->priority)
+          high_priority = p1;
+      }
       // Switch to chosen process.  It is the process's job
       // to release ptable.lock and then reacquire it
       // before jumping back to us.
+      //set p to highest priority
+      p = high_priority;
       c->proc = p;
       switchuvm(p);
       p->state = RUNNING;
@@ -403,12 +423,36 @@ scheduler(void)
       switchkvm();
 
       // Process is done running for now.
+      // Once its put back in the table, priority will be 
+      // checked again. If last process has highest priority then
+      // it will be picked again, if not the other one w highest
+      // priority will run
       // It should have changed its p->state before coming back.
       c->proc = 0;
     }
     release(&ptable.lock);
 
   }
+}
+
+//Sets priority of the processes at any given time
+int setpriority(int priority)
+{
+  struct proc *p = myproc();
+
+  //set priority restraints
+  if(priority < 0) {priority = 0;}
+  if(priority > 31) {priority = 31;}
+
+  //set it
+  p->priority = priority;
+  return 0;
+}
+
+int getpriority() 
+{
+  struct proc* curproc = myproc();
+  return curproc->priority;
 }
 
 // Enter scheduler.  Must hold only ptable.lock

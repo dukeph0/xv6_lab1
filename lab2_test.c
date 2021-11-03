@@ -18,8 +18,8 @@ int main(int argc, char *argv[])
     // use this part to test the priority scheduler. Assuming that the priorities range between range between 0 to 31
     // 0 is the highest priority and 31 is the lowest priority.  
 
-  int pid;
-  int i,j,k;
+  	int pid;
+  	int i,j,k;
   
     printf(1, "\n  Step 2: testing the priority scheduler and setpriority(int priority)) systema call:\n");
     printf(1, "\n  Step 2: Assuming that the priorities range between range between 0 to 31\n");
