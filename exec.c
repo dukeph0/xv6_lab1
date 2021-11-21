@@ -64,10 +64,10 @@ exec(char *path, char **argv)
   // Make the first inaccessible.  Use the second as the user stack.
   sz = PGROUNDUP(sz);
   sp = KERNBASE-1;
-  if((sz = allocuvm(pgdir, sp - PGSIZE, sp)) == 0)
+  //points to the top page of the user part of memory
+  if((allocuvm(pgdir, sp - PGSIZE, sp)) == 0)
     goto bad;
-    curproc->stackP = 1;
-    cprintf("Initial number of pages by process: %d\n", curproc->stackP);
+  curproc->szStack = 1;
   //clearpteu(pgdir, (char*)(sz - 2*PGSIZE));
   //sp = sz;
 
