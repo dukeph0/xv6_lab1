@@ -79,18 +79,18 @@ trap(struct trapframe *tf)
     break;
 
     case T_PGFLT: ;
-      uint f = rcr2();
-      if(f > KERNBASE-1){
-        cprintf("from trap access > KERNBASE");
+      uint addr = rcr2();
+      // if(addr > KERNBASE-1)
+      //   cprintf("from trap access > KERNBASE");
+      //   exit(0);
+      
+      addr = PGROUNDDOWN(addr);
+      if(allocuvm(myproc()->pgdir, addr, addr + PGSIZE) == 0)
+        cprintf("case T_PGFLT from trap.c: allocuvm failed. Number of current allocated pages: %d\n", myproc()->szStack);
         exit(0);
-      }
-      f = PGROUNDDOWN(f);
-      if(allocuvm(myproc()->pgdir, f, f + PGSIZE) == 0){
-        cprintf("case T_PGFLT from trap.c: allocuvm failed. Number of current allocated pages: %d\n", myproc()->stackP);
-        exit(0);
-      }
-      myproc()->stackP++;
-      cprintf("case T_PGFLT from trap.c: allocuvm succeeded. Number of pages allocated: %d\n", myproc()->stackP);
+
+      myproc()->szStack++;
+      cprintf("Increased stack size. Number of pages allocated: %d\n", myproc()->szStack);
       break;
 
   //PAGEBREAK: 13

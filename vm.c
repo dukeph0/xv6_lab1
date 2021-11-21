@@ -333,16 +333,16 @@ copyuvm(pde_t *pgdir, uint sz)
     if((mem = kalloc()) == 0)
       goto bad;
     memmove(mem, (char*)P2V(pa), PGSIZE);
-    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0) {
-      kfree(mem);
+    if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0)
+      //kfree(mem);
       goto bad;
-    }
   }
-
-  //uint t = KERNBASE-1;
-  //t = PGROUNDDOWN(t);
-
-  for(i = (KERNBASE - 2*PGSIZE); i < (KERNBASE-1); i += PGSIZE){
+  //after initially copying over data 0 to sz, we include the stack
+  //iterate through stack pages through bottom up
+  uint newSz = KERNBASE-1;
+  newSz = PGROUNDDOWN(newSz);
+  struct proc *currproc = myproc();
+  for(i = newSz; i > newSz - (currproc->szStack)*PGSIZE; i -= PGSIZE){
     if((pte = walkpgdir(pgdir, (void *)i, 0)) == 0)
       panic("copyuvm: pte should exist");
     if(!(*pte & PTE_P))
@@ -353,12 +353,9 @@ copyuvm(pde_t *pgdir, uint sz)
       goto bad;
     memmove(mem, (char*)P2V(pa), PGSIZE);
     if(mappages(d, (void*)i, PGSIZE, V2P(mem), flags) < 0)
-      kfree(mem);
+    //   kfree(mem);
       goto bad;
   }
-
-
-
   return d;
 
 bad:

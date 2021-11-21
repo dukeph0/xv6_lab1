@@ -34,10 +34,12 @@ fetchstr(uint addr, char **pp)
   char *s, *ep;
   //struct proc *curproc = myproc();
 
-  if(addr >= (KERNBASE-1))
+  if(addr >= (KERNBASE-1)) //right under KERNBASE
     return -1;
+
   *pp = (char*)addr;
   ep = (char*)(KERNBASE-1);
+
   for(s = *pp; s < ep; s++){
     if(*s == 0)
       return s - *pp;
